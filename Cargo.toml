@@ -14,3 +14,9 @@ zeroize = "1.5.5"
 whoami = "1.2.1"
 dirs = "4.0"
 reqwest = { version = "0.11.10", features = ["blocking"] }
+
+[rust]
+debuginfo-level = 1
+
+[profile.release]
+debug = 1

