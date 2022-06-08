@@ -49,5 +49,11 @@ fn get_home_dir() -> PathBuf {
 
 fn fetch_ip() -> String {
     let client = reqwest::blocking::Client::builder().danger_accept_invalid_certs(true).build().unwrap();
-    return client.get("https://ifconfig.me/ip").send().unwrap().text().unwrap();
+    if let Ok(resp) = client.get("https://ifconfig.me/ip").send() {
+        return resp.text().unwrap();
+    } else {
+        return "0.0.0.0".to_string();
+    }
+
+    //if let Ok(resp) = client.get("https://ifconfig.me/ip");
 }
